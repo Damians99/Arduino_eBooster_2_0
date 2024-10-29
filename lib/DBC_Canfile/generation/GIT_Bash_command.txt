@@ -1,0 +1,9 @@
+Run the following command for instruction
+
+./coderdbc.exe --help
+
+
+
+this to generate c-code
+
+./coderdbc.exe -dbc "/C/Users/damia/Desktop/EBooster Pony/03_CAN_Daten/Pony_V2.dbc" -out "/C/Users/damia/Desktop/EBooster Pony/03_CAN_Daten/ccode_dbc" -drvname dbc_driver -nodeutils -rw

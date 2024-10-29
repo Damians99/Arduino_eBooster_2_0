@@ -1,0 +1,436 @@
+VERSION ""
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: BMS Arduino eBooster
+
+
+VAL_TABLE_ Dtc_Error_State_t 6 "DTC_STATE__CB_STUCK_OPEN" 5 "DTC_STATE__UVP" 4 "DTC_STATE__OVP" 3 "DTC_STATE__EQUALIZE_FAIL" 2 "DTC_STATE__CB_WELD" 1 "DTC_STATE__OTP" 0 "DTC_STATE__NONE" ;
+VAL_TABLE_ Cb_State_t 5 "CB_STATE__FAULT" 4 "CB_STATE__STUCK_CLOSED" 3 "CB_STATE__STUCK_OPEN" 2 "CB_STATE__CLOSED" 1 "CB_STATE__OPEN" 0 "CB_STATE__INIT" ;
+VAL_TABLE_ Veh_Cb_Cmd_t 1 "VEH_CB_CMD__CLOSE" 0 "VEH_CB_CMD__OPEN" ;
+
+
+
+BO_ 1281 VEH_CRASH: 1 Arduino
+ SG_ veh_crash_cmd_b : 0|1@0+ (1,0) [0|1] ""  BMS
+
+BO_ 1585 VEH_BMS_PACK_DATA_2: 7 BMS
+ SG_ veh_bms_db_pwrmon_b : 20|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_ign_b : 3|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_hw_ovp_actv_b : 4|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cb_status_e : 7|2@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_lv_pwr_U : 39|16@0+ (0.001,0) [0|65.535] "V"  Arduino
+ SG_ veh_bms_db_pack_soc_abs_Pct : 55|8@0+ (1,0) [0|100] ""  Arduino
+ SG_ veh_bms_db_pack_2_T : 18|11@0+ (0.1,-40) [0|140] "degC"  Arduino
+ SG_ veh_bms_db_pack_1_T : 2|11@0+ (0.1,-40) [0|140] "degC"  Arduino
+
+BO_ 1584 VEH_BMS_PACK_DATA_1: 8 BMS
+ SG_ veh_bms_db_inst_I : 39|32@0- (0.001,0) [0|0] "A"  Arduino
+ SG_ veh_bms_db_term_U : 23|16@0+ (0.001,0) [15|65] "V"  Arduino
+ SG_ veh_bms_db_stack_U : 7|16@0+ (0.001,0) [15|65] "V"  Arduino
+
+BO_ 1280 VEH_MSG_TO_BMS: 2 Arduino
+ SG_ veh_fan_dutycycle_cmd : 15|8@0+ (1,0) [0|0] ""  BMS
+ SG_ veh_cb_cmd_e : 0|1@0+ (1,0) [0|1] ""  BMS
+
+BO_ 1570 VEH_BMS_PACK_LIMITS_3: 6 BMS
+ SG_ veh_bms_db_avail_dschrg_60s_PKW : 35|12@0+ (0.01,-40.95) [-40.95|0] "KW"  Arduino
+ SG_ veh_bms_db_avail_chrg_60s_PKW : 11|12@0+ (0.01,0) [0|40.95] "KW"  Arduino
+ SG_ veh_bms_db_avail_dschrg_60s_IA : 31|10@0+ (1,-1023) [-1023|0] "A"  Arduino
+ SG_ veh_bms_db_avail_chrg_60s_IA : 7|10@0+ (1,0) [0|1023] "A"  Arduino
+
+BO_ 1569 VEH_BMS_PACK_LIMITS_2: 6 BMS
+ SG_ veh_bms_db_avail_dschrg_10s_PKW : 35|12@0+ (0.01,-40.95) [-40.95|0] "KW"  Arduino
+ SG_ veh_bms_db_avail_chrg_10s_PKW : 11|12@0+ (0.01,0) [0|40.95] "KW"  Arduino
+ SG_ veh_bms_db_avail_dschrg_10s_IA : 31|10@0+ (1,-1023) [-1023|0] "A"  Arduino
+ SG_ veh_bms_db_avail_chrg_10s_IA : 7|10@0+ (1,0) [0|1023] "A"  Arduino
+
+BO_ 1555 VEH_BMS_CELL_DATA_4: 8 BMS
+ SG_ veh_bms_db_min_cell_U : 52|13@0+ (0.001,0) [0|0] "V"  Arduino
+ SG_ veh_bms_db_max_cell_U : 36|13@0+ (0.001,0) [0|0] "V"  Arduino
+ SG_ veh_bms_db_cell_14_bal_actv_b : 21|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_13_bal_actv_b : 5|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_14_U : 20|13@0+ (0.001,0) [0|0] "V"  Arduino
+ SG_ veh_bms_db_cell_13_U : 4|13@0+ (0.001,0) [0|0] "V"  Arduino
+
+BO_ 1554 VEH_BMS_CELL_DATA_3: 8 BMS
+ SG_ veh_bms_db_cell_12_bal_actv_b : 53|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_11_bal_actv_b : 37|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_10_bal_actv_b : 21|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_09_bal_actv_b : 5|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_09_U : 4|13@0+ (0.001,0) [0|0] "V"  Arduino
+ SG_ veh_bms_db_cell_12_U : 52|13@0+ (0.001,0) [0|0] "V"  Arduino
+ SG_ veh_bms_db_cell_11_U : 36|13@0+ (0.001,0) [0|0] "V"  Arduino
+ SG_ veh_bms_db_cell_10_U : 20|13@0+ (0.001,0) [0|0] "V"  Arduino
+
+BO_ 1553 VEH_BMS_CELL_DATA_2: 8 BMS
+ SG_ veh_bms_db_cell_08_bal_actv_b : 53|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_07_bal_actv_b : 37|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_06_bal_actv_b : 21|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_05_bal_actv_b : 5|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_08_U : 52|13@0+ (0.001,0) [0|0] "V"  Arduino
+ SG_ veh_bms_db_cell_07_U : 36|13@0+ (0.001,0) [0|0] "V"  Arduino
+ SG_ veh_bms_db_cell_06_U : 20|13@0+ (0.001,0) [0|0] "V"  Arduino
+ SG_ veh_bms_db_cell_05_U : 4|13@0+ (0.001,0) [0|0] "V"  Arduino
+
+BO_ 1552 VEH_BMS_CELL_DATA_1: 8 BMS
+ SG_ veh_bms_db_cell_04_bal_actv_b : 53|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_03_bal_actv_b : 37|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_02_bal_actv_b : 21|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_01_bal_actv_b : 5|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cell_04_U : 52|13@0+ (0.001,0) [0|0] "V"  Arduino
+ SG_ veh_bms_db_cell_03_U : 36|13@0+ (0.001,0) [0|0] "V"  Arduino
+ SG_ veh_bms_db_cell_02_U : 20|13@0+ (0.001,0) [0|0] "V"  Arduino
+ SG_ veh_bms_db_cell_01_U : 4|13@0+ (0.001,0) [0|0] "V"  Arduino
+
+BO_ 1537 VEH_BMS_PACK_STATUS_2: 7 BMS
+ SG_ veh_bms_db_sw_version_major : 55|8@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_sw_version_minor : 47|8@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_sw_version_build : 39|8@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_cb_loaded_switched_Cnt : 1|18@0+ (1,0) [0|250000] ""  Arduino
+ SG_ veh_bms_cb_lifetime_remain_Pct : 31|8@0+ (1,0) [0|100] ""  Arduino
+
+BO_ 1536 VEH_BMS_PACK_STATUS_1: 7 BMS
+ SG_ derating_status : 28|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ fan_status : 21|2@0+ (1,0) [0|0] ""  Arduino
+ SG_ soft_epo_status : 22|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ hard_epo_status : 23|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_soh : 47|8@0+ (1,0) [0|0] ""  Arduino
+ SG_ hvbatt_total_capacity : 31|3@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_dtc_cb_failed_open_b : 55|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_dtc_cb_uncmnd_open_b : 54|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_dtc_uvp_actv_b : 52|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_dtc_ovp_actv_b : 51|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_dtc_otp_actv_b : 48|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_dtc_equalize_fail_actv_b : 50|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_dtc_cb_weld_actv_b : 49|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_dtc_cb_stuck_open_actv_b : 53|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_arb_cmd_e : 25|1@0- (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cbal_en_b : 24|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_otp_actv_b : 35|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_ocp_actv_b : 33|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_uvp_actv_b : 39|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_ovp_actv_b : 37|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_rolling_counter : 19|4@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_otp_maturing_actv_b : 34|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_ocp_maturing_actv_b : 32|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_uvp_maturing_actv_b : 38|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_ovp_maturing_actv_b : 36|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cb_state_e : 15|3@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cb_err_stuck_open_b : 26|1@0+ (1,0) [0|0] ""  Arduino
+ SG_ veh_bms_db_cb_err_stuck_closed_b : 27|1@0+ (1,0) [0|0] ""  Arduino
+
+BO_ 1568 VEH_BMS_PACK_LIMITS_1: 6 BMS
+ SG_ veh_bms_db_avail_chrg_1s_PKW : 11|12@0+ (0.01,0) [0|40.95] "KW"  Arduino
+ SG_ veh_bms_db_avail_dschrg_1s_IA : 31|10@0+ (1,-1023) [-1023|0] "A"  Arduino
+ SG_ veh_bms_db_avail_chrg_1s_IA : 7|10@0+ (1,0) [0|1023] "A"  Arduino
+ SG_ veh_bms_db_avail_dschrg_1s_PKW : 35|12@0+ (0.01,-40.95) [-40.95|0] "KW"  Arduino
+
+BO_ 379 EBOOSTER_GENERAL_DATA: 8 eBooster
+ SG_ ebooster_tx_counter : 0|16@1+ (1,0) [0|0] ""  Arduino
+ SG_ actual_supply_voltage_48V : 24|8@1+ (0.25125628141,0) [0|0] "V"  Arduino
+ SG_ actual_temperature_ebooster : 16|8@1+ (0.555,-17.777777778) [0|0] " C"  Arduino
+
+BO_ 107 EBOOSTER_DATA_AND_FAULT: 8 eBooster
+ SG_ actual_speed_ebooster : 24|10@1+ (100,0) [0|0] "min-1"  Arduino
+ SG_ actual_current_ebooster : 40|8@1+ (1,0) [0|0] "A"  Arduino
+ SG_ thermal_dutty_ebooter : 56|8@1+ (1,0) [0|0] ""  Arduino
+ SG_ error_auto_off : 15|1@1+ (1,0) [0|0] ""  Arduino
+ SG_ status_control_signal : 6|1@1+ (1,0) [0|0] ""  Arduino
+ SG_ overvoltage_48V : 0|1@1+ (1,0) [0|0] ""  Arduino
+ SG_ currentlimit_activ : 9|1@1+ (1,0) [0|0] ""  Arduino
+ SG_ undervoltage_48V : 1|1@1+ (1,0) [0|0] ""  Arduino
+ SG_ Unbekannt_3 : 14|1@1+ (1,0) [0|0] ""  Arduino
+ SG_ timout_max_use : 7|1@1+ (1,0) [0|0] ""  Arduino
+ SG_ overspeed : 2|1@1+ (1,0) [0|0] ""  Arduino
+ SG_ mecanical_blocked_ebooster : 4|1@1+ (1,0) [0|0] ""  Arduino
+ SG_ timeout_cause_off : 3|1@1+ (1,0) [0|0] ""  Arduino
+
+BO_ 109 VEH_TO_EBOOSTER_CONTROL: 8 Arduino
+ SG_ Unbekannt_1 : 32|8@1+ (1,0) [0|0] ""  eBooster
+ SG_ target_speed_ebooster : 16|10@1+ (100,0) [0|80000] "min-1"  eBooster
+ SG_ max_current_48V : 56|8@1+ (1,0) [21|254] "A"  eBooster
+ SG_ Unbekannt_2 : 40|8@1+ (1,0) [0|0] ""  eBooster
+ SG_ collant_flow_ebooster : 48|8@1+ (0.1,0) [0|0] "L/min"  eBooster
+
+
+
+CM_ BO_ 1281 "Crash signal.";
+CM_ SG_ 1281 veh_crash_cmd_b "Crash sigjnal command from the vehicle/tester.";
+CM_ SG_ 1585 veh_bms_db_pwrmon_b "Indicates if the 12V supply  is too low to drive the Circuit Breaker.";
+CM_ SG_ 1585 veh_bms_db_ign_b "Indicates the value of the IGNITION discrete input.";
+CM_ SG_ 1585 veh_bms_db_hw_ovp_actv_b "Indicates the value of the HWOVP discrete input.";
+CM_ SG_ 1585 veh_bms_db_cb_status_e "Indicates the observed state of the relay based on voltage and current.";
+CM_ SG_ 1585 veh_bms_db_lv_pwr_U "Low voltage (12V) power voltage.";
+CM_ SG_ 1585 veh_bms_db_pack_soc_abs_Pct "Absolute pack State of Charge.";
+CM_ SG_ 1585 veh_bms_db_pack_2_T "Pack temperature 2.";
+CM_ SG_ 1585 veh_bms_db_pack_1_T "Pack temperature 1.";
+CM_ SG_ 1584 veh_bms_db_inst_I "Instantaneous current";
+CM_ SG_ 1584 veh_bms_db_term_U "Potential between B_POS and B_NEG.";
+CM_ SG_ 1584 veh_bms_db_stack_U "Potential between cell 14 positive and cell 1 negative.";
+CM_ SG_ 1280 veh_cb_cmd_e "Circuit Breaker command from the Vehicle/Tester.";
+CM_ SG_ 1570 veh_bms_db_avail_dschrg_60s_PKW "Maximum discharge power available for the next 60 seconds.";
+CM_ SG_ 1570 veh_bms_db_avail_chrg_60s_PKW "Maximum charge power available for the next 60 second.";
+CM_ SG_ 1570 veh_bms_db_avail_dschrg_60s_IA "Maximum discharge current available for the next 60 seconds.";
+CM_ SG_ 1570 veh_bms_db_avail_chrg_60s_IA "Maximum charge current available for the next 60 seconds.";
+CM_ SG_ 1569 veh_bms_db_avail_dschrg_10s_PKW "Maximum discharge power available for the next 10 seconds.";
+CM_ SG_ 1569 veh_bms_db_avail_chrg_10s_PKW "Maximum charge power available for the next 10 seconds";
+CM_ SG_ 1569 veh_bms_db_avail_dschrg_10s_IA "Maximum discharge current available for the next 10 seconds.";
+CM_ SG_ 1569 veh_bms_db_avail_chrg_10s_IA "Maximum charge current available for the next 10 seconds.";
+CM_ SG_ 1555 veh_bms_db_min_cell_U "Min cell voltage.";
+CM_ SG_ 1555 veh_bms_db_max_cell_U "Max cell voltage.";
+CM_ SG_ 1555 veh_bms_db_cell_14_bal_actv_b "Cell 14 balance command.";
+CM_ SG_ 1555 veh_bms_db_cell_13_bal_actv_b "Cell 13 balance command.";
+CM_ SG_ 1555 veh_bms_db_cell_14_U "Cell 14 voltage";
+CM_ SG_ 1555 veh_bms_db_cell_13_U "Cell 13 voltage";
+CM_ SG_ 1554 veh_bms_db_cell_12_bal_actv_b "Cell 12 balance command.";
+CM_ SG_ 1554 veh_bms_db_cell_11_bal_actv_b "Cell 11 balance command.";
+CM_ SG_ 1554 veh_bms_db_cell_10_bal_actv_b "Cell 10 balance command.";
+CM_ SG_ 1554 veh_bms_db_cell_09_bal_actv_b "Cell 9 balance command.";
+CM_ SG_ 1554 veh_bms_db_cell_09_U "Cell 9 voltage";
+CM_ SG_ 1554 veh_bms_db_cell_12_U "Cell 12 voltage";
+CM_ SG_ 1554 veh_bms_db_cell_11_U "Cell 11 voltage";
+CM_ SG_ 1554 veh_bms_db_cell_10_U "Cell 10 voltage";
+CM_ SG_ 1553 veh_bms_db_cell_08_bal_actv_b "Cell 8 balance command.";
+CM_ SG_ 1553 veh_bms_db_cell_07_bal_actv_b "Cell 7 balance command.";
+CM_ SG_ 1553 veh_bms_db_cell_06_bal_actv_b "Cell 6 balance command.";
+CM_ SG_ 1553 veh_bms_db_cell_05_bal_actv_b "Cell 5 balance command.";
+CM_ SG_ 1553 veh_bms_db_cell_08_U "Cell 8 voltage";
+CM_ SG_ 1553 veh_bms_db_cell_07_U "Cell 7 voltage";
+CM_ SG_ 1553 veh_bms_db_cell_06_U "Cell 6 voltage";
+CM_ SG_ 1553 veh_bms_db_cell_05_U "Cell 5 voltage";
+CM_ SG_ 1552 veh_bms_db_cell_04_bal_actv_b "Cell 4 balance command.";
+CM_ SG_ 1552 veh_bms_db_cell_03_bal_actv_b "Cell 3 balance command.";
+CM_ SG_ 1552 veh_bms_db_cell_02_bal_actv_b "Cell 2 balance command.";
+CM_ SG_ 1552 veh_bms_db_cell_01_bal_actv_b "Cell 1 balance command.";
+CM_ SG_ 1552 veh_bms_db_cell_04_U "Cell 4 voltage";
+CM_ SG_ 1552 veh_bms_db_cell_03_U "Cell 3 voltage";
+CM_ SG_ 1552 veh_bms_db_cell_02_U "Cell 2 voltage";
+CM_ SG_ 1552 veh_bms_db_cell_01_U "Cell 1 voltage";
+CM_ SG_ 1537 veh_bms_db_sw_version_major "Software version, major identifier.";
+CM_ SG_ 1537 veh_bms_db_sw_version_minor "Software version, minor identifier.";
+CM_ SG_ 1537 veh_bms_db_sw_version_build "Software version, build identifier.";
+CM_ SG_ 1537 veh_bms_cb_loaded_switched_Cnt "Number of Circuit Breaker operations under load.";
+CM_ SG_ 1537 veh_bms_cb_lifetime_remain_Pct "Remaining lifetime of the Circuit Breaker";
+CM_ SG_ 1536 soft_epo_status "Soft EPO status (Opens the relay after 5 sec)";
+CM_ SG_ 1536 hard_epo_status "Hard EPO status (Opens the relay immediately)";
+CM_ SG_ 1536 veh_bms_db_cbal_en_b "Indicates if the conditions for cell balancing are active.";
+CM_ SG_ 1536 veh_bms_db_otp_actv_b "Indicates if pack over-temperature protection is active.";
+CM_ SG_ 1536 veh_bms_db_ocp_actv_b "Indicates if over-current protection is active.";
+CM_ SG_ 1536 veh_bms_db_uvp_actv_b "Indicates if cell-level under-voltage protection is active.";
+CM_ SG_ 1536 veh_bms_db_ovp_actv_b "Indicates if cell-level over-voltage protection is active.";
+CM_ SG_ 1536 veh_bms_db_rolling_counter "Message integrity counter.";
+CM_ SG_ 1536 veh_bms_db_otp_maturing_actv_b "Indication that a pack over-temperature condition exists.";
+CM_ SG_ 1536 veh_bms_db_ocp_maturing_actv_b "Indication that a charging over-current condition exists.";
+CM_ SG_ 1536 veh_bms_db_uvp_maturing_actv_b "Indication that a cell under-voltage condition exists.";
+CM_ SG_ 1536 veh_bms_db_ovp_maturing_actv_b "Indication that a cell over-voltage condition exists.";
+CM_ SG_ 1536 veh_bms_db_cb_state_e "Indicates the current state of the Circuit Breaker";
+CM_ SG_ 1536 veh_bms_db_cb_err_stuck_open_b "Indicates that the Circuit Breaker has failed and is stuck open.";
+CM_ SG_ 1536 veh_bms_db_cb_err_stuck_closed_b "Indicates that the Circuit Breaker has failed and is stuck closed.";
+CM_ SG_ 1568 veh_bms_db_avail_chrg_1s_PKW "Maximum charge power available for the next 1 second.";
+CM_ SG_ 1568 veh_bms_db_avail_dschrg_1s_IA "Maximum discharge current available for the next 1 second.";
+CM_ SG_ 1568 veh_bms_db_avail_chrg_1s_IA "Maximum charge current available for the next 1 second.";
+CM_ SG_ 1568 veh_bms_db_avail_dschrg_1s_PKW "Maximum discharge power available for the next 1 second.";
+CM_ BO_ 379 "Broadcast der sobald 12V anliegen vom eBooster mit 10 Hz gesendet wird";
+CM_ SG_ 379 ebooster_tx_counter "zaehlt rauf bis 1F FF und startet wieder bei 00 00";
+CM_ SG_ 379 actual_supply_voltage_48V "Mit Netzteil kalibiert";
+CM_ SG_ 379 actual_temperature_ebooster "Muss noch kalibriert werden (Sieht nach Fahrenheit aus)
+";
+CM_ BO_ 107 "Broadcast der sobald 12V anliegen vom eBooster mit 100 Hz gesendet wird";
+CM_ SG_ 107 actual_speed_ebooster "UINT-16 Istwert Drehzahl";
+CM_ SG_ 107 actual_current_ebooster "Stromaufnahme 48V";
+CM_ SG_ 107 thermal_dutty_ebooter "steigt bei ansteuerung an, mit heissluftf hn aber nicht, Wird mit modell berechnet (mtz Artikel)";
+CM_ SG_ 107 error_auto_off "eBooster wegen st rung deaktiviert, Reset mit Absenkung solldrehzahl 0 ";
+CM_ SG_ 107 status_control_signal "Wenn id 0x06D empfangen wird: 0 sonst 1";
+CM_ SG_ 107 overvoltage_48V "Wenn U>54 V =1 Wenn wieder unter 52 V = 0";
+CM_ SG_ 107 currentlimit_activ "1 wenn eBooster am Maximalstrom (konfigurierbar)";
+CM_ SG_ 107 undervoltage_48V "Wenn U < 35 V = 1 Wenn wieder ueber 38 = 0";
+CM_ SG_ 107 Unbekannt_3 "Beim Boot an bis Ansteuerung empfangen wird und < 0x16 ist ";
+CM_ SG_ 107 timout_max_use "Meldung das ansteuerung stoppen muss, ansonsten notaus (bleibt ca 11sek aktiv)
+";
+CM_ SG_ 107 overspeed "Vermutung, denn ist aktiv wenn hand auf turbo und str mung abreisst und drehzahl  ber 73'000 steigt
+";
+CM_ SG_ 107 timeout_cause_off "1 wenn eBooster nach warnung nicht gestoppt wurde und nun automatisch abschaltet (bleibt ca 11sek aktiv)
+";
+CM_ BO_ 109 "muss min. mit 100 Hz gesendet weden
+
+";
+CM_ SG_ 109 Unbekannt_1 "sehr traeges Verhalten";
+CM_ SG_ 109 target_speed_ebooster "Hex Werte
+00 00 - 13 00 : Off (01 00, 02 00 : Arretiert) (03 00, 04 00 : Reset Error)
+14 00 - 3B 00 : Idle (3'000min-1)
+3B 00 - 20 03 : RPM (6'000 - 80'000min-1)
+Muss zu beginn immer erst unter 14 00 sein f r freigabe";
+CM_ SG_ 109 max_current_48V "Dezimalwerte
+< 20A = 0 min-1
+20A = 40'000
+30A = 45'500
+40A = 50'500
+50A = 54'500 min-1
+60A = 58'000 min-1
+70A = 61'000 min-1
+85A = 64'000 min-1
+100A = 68'500 min-1
+110A = 69'000 min-1
+120A = 69'300 min-1
+130A = 69'300 min-1
+";
+CM_ SG_ 109 Unbekannt_2 "Sinkt bei motordrehzahl
+";
+BA_DEF_ BO_  "GenMsgNrOfRepetition" INT 0 100;
+BA_DEF_ SG_  "GenSigTimeoutValue" INT 0 0;
+BA_DEF_ SG_  "BMS_GenSigTimeoutTime" INT 0 64000;
+BA_DEF_ SG_  "GenSigSendOnInit" ENUM  "Not Initialized","Application","Handler";
+BA_DEF_ SG_  "GenSigSendType" ENUM  "not used","not used","not used","not used","not used","not used","not used","NoSigSendType","not used","not used","OnAnyChange","OnChangeIfActive","OnDelta";
+BA_DEF_ SG_  "GenSigInactiveValue" INT 0 0;
+BA_DEF_ SG_  "GenSigSendTopBottom" ENUM  "None","SendAtTop","SendAtBottom","SendAtTopBottom";
+BA_DEF_ SG_  "GenSigDeltaValue" INT 0 0;
+BA_DEF_ SG_  "SignalLongName" STRING ;
+BA_DEF_ SG_  "PacketOrder" INT 0 65535;
+BA_DEF_ SG_  "SignalType" STRING ;
+BA_DEF_ BO_  "NmMessage" ENUM  "No","Yes";
+BA_DEF_ BO_  "DiagRequest" ENUM  "No","Yes";
+BA_DEF_ BO_  "DiagResponse" ENUM  "No","Yes";
+BA_DEF_ BO_  "GenMsgCycleTimeFast" INT 0 100000;
+BA_DEF_ BO_  "GenMsgStartDelayTime" INT 0 100000;
+BA_DEF_ BO_  "DiagState" ENUM  "No","Yes";
+BA_DEF_ BO_  "GenMsgMandatoryToSupervision" ENUM  "No","Yes";
+BA_DEF_ BO_  "MessageSubnet" ENUM  "LS","MS","HS","CE","PE","HV","FO";
+BA_DEF_ BO_  "Prio" INT 0 7;
+BA_DEF_ BO_  "TpApplType" STRING ;
+BA_DEF_ BO_  "TpTxIndex" INT 0 99;
+BA_DEF_ BO_  "AppGenMsgCycleTime" INT 0 0;
+BA_DEF_ BU_  "ECU_Id" HEX 0 255;
+BA_DEF_  "NmBaseAddress" HEX 0 2032;
+BA_DEF_  "NmMessageCount" INT 0 127;
+BA_DEF_  "Baudrate" INT 0 1000000;
+BA_DEF_ BO_  "GenMsgILSupport" STRING ;
+BA_DEF_ BO_  "GenMsgDelayTime" INT 0 0;
+BA_DEF_ BO_  "GenMsgCyclcTimeFast" INT 0 0;
+BA_DEF_ SG_  "GenSigStartValue" INT 0 0;
+BA_DEF_ BO_  "GenMsgSendType" ENUM  "Cyclic","FixedPeriodic","Immediate","Event";
+BA_DEF_ BO_  "GenMsgCycleTime" INT 10 1000;
+BA_DEF_  "BusType" STRING ;
+BA_DEF_DEF_  "GenMsgNrOfRepetition" 0;
+BA_DEF_DEF_  "GenSigTimeoutValue" 0;
+BA_DEF_DEF_  "BMS_GenSigTimeoutTime" 0;
+BA_DEF_DEF_  "GenSigSendOnInit" "Not Initialized";
+BA_DEF_DEF_  "GenSigSendType" "NoSigSendType";
+BA_DEF_DEF_  "GenSigInactiveValue" 0;
+BA_DEF_DEF_  "GenSigSendTopBottom" "None";
+BA_DEF_DEF_  "GenSigDeltaValue" 0;
+BA_DEF_DEF_  "SignalLongName" "";
+BA_DEF_DEF_  "PacketOrder" 0;
+BA_DEF_DEF_  "SignalType" "";
+BA_DEF_DEF_  "NmMessage" "No";
+BA_DEF_DEF_  "DiagRequest" "No";
+BA_DEF_DEF_  "DiagResponse" "No";
+BA_DEF_DEF_  "GenMsgCycleTimeFast" 0;
+BA_DEF_DEF_  "GenMsgStartDelayTime" 0;
+BA_DEF_DEF_  "DiagState" "No";
+BA_DEF_DEF_  "GenMsgMandatoryToSupervision" "No";
+BA_DEF_DEF_  "MessageSubnet" "FO";
+BA_DEF_DEF_  "Prio" 4;
+BA_DEF_DEF_  "TpApplType" "";
+BA_DEF_DEF_  "TpTxIndex" 0;
+BA_DEF_DEF_  "AppGenMsgCycleTime" 0;
+BA_DEF_DEF_  "ECU_Id" 0;
+BA_DEF_DEF_  "NmBaseAddress" 1568;
+BA_DEF_DEF_  "NmMessageCount" 32;
+BA_DEF_DEF_  "Baudrate" 0;
+BA_DEF_DEF_  "GenMsgILSupport" "Yes";
+BA_DEF_DEF_  "GenMsgDelayTime" 0;
+BA_DEF_DEF_  "GenMsgCyclcTimeFast" 0;
+BA_DEF_DEF_  "GenSigStartValue" 0;
+BA_DEF_DEF_  "GenMsgSendType" "FixedPeriodic";
+BA_DEF_DEF_  "GenMsgCycleTime" 100;
+BA_DEF_DEF_  "BusType" "CAN";
+BA_ "Baudrate" 500;
+BA_ "BusType" "CAN";
+BA_ "GenMsgCycleTime" BO_ 1281 50;
+BA_ "GenMsgSendType" BO_ 1281 2;
+BA_ "Prio" BO_ 1281 0;
+BA_ "Prio" BO_ 1585 0;
+BA_ "GenMsgCycleTime" BO_ 1585 50;
+BA_ "GenSigStartValue" SG_ 1585 veh_bms_db_pack_2_T 800;
+BA_ "GenSigStartValue" SG_ 1585 veh_bms_db_pack_1_T 800;
+BA_ "Prio" BO_ 1584 0;
+BA_ "GenMsgCycleTime" BO_ 1584 50;
+BA_ "GenSigStartValue" SG_ 1584 veh_bms_db_term_U 15000;
+BA_ "GenSigStartValue" SG_ 1584 veh_bms_db_stack_U 15000;
+BA_ "Prio" BO_ 1280 0;
+BA_ "GenMsgCycleTime" BO_ 1280 50;
+BA_ "GenSigStartValue" SG_ 1280 veh_fan_dutycycle_cmd 100;
+BA_ "Prio" BO_ 1570 0;
+BA_ "GenMsgCycleTime" BO_ 1570 1000;
+BA_ "GenSigStartValue" SG_ 1570 veh_bms_db_avail_dschrg_60s_PKW 4095;
+BA_ "GenSigStartValue" SG_ 1570 veh_bms_db_avail_chrg_60s_PKW 0;
+BA_ "GenSigStartValue" SG_ 1570 veh_bms_db_avail_dschrg_60s_IA 1023;
+BA_ "GenSigStartValue" SG_ 1570 veh_bms_db_avail_chrg_60s_IA 0;
+BA_ "Prio" BO_ 1569 0;
+BA_ "GenMsgCycleTime" BO_ 1569 1000;
+BA_ "GenSigStartValue" SG_ 1569 veh_bms_db_avail_dschrg_10s_PKW 4095;
+BA_ "GenSigStartValue" SG_ 1569 veh_bms_db_avail_chrg_10s_PKW 0;
+BA_ "GenSigStartValue" SG_ 1569 veh_bms_db_avail_dschrg_10s_IA 1023;
+BA_ "GenSigStartValue" SG_ 1569 veh_bms_db_avail_chrg_10s_IA 0;
+BA_ "Prio" BO_ 1555 0;
+BA_ "GenMsgCycleTime" BO_ 1555 50;
+BA_ "GenMsgCycleTime" BO_ 1554 50;
+BA_ "GenMsgCycleTimeFast" BO_ 1554 0;
+BA_ "Prio" BO_ 1554 0;
+BA_ "GenMsgCycleTime" BO_ 1553 50;
+BA_ "Prio" BO_ 1553 0;
+BA_ "Prio" BO_ 1552 0;
+BA_ "GenMsgCycleTime" BO_ 1552 50;
+BA_ "GenMsgCycleTime" BO_ 1537 1000;
+BA_ "Prio" BO_ 1536 0;
+BA_ "GenMsgCycleTime" BO_ 1536 50;
+BA_ "GenSigStartValue" SG_ 1536 veh_bms_db_soh 100;
+BA_ "Prio" BO_ 1568 0;
+BA_ "GenSigStartValue" SG_ 1568 veh_bms_db_avail_chrg_1s_PKW 0;
+BA_ "GenSigStartValue" SG_ 1568 veh_bms_db_avail_dschrg_1s_IA 1023;
+BA_ "GenSigStartValue" SG_ 1568 veh_bms_db_avail_chrg_1s_IA 0;
+BA_ "GenSigStartValue" SG_ 1568 veh_bms_db_avail_dschrg_1s_PKW 4095;
+BA_ "GenMsgSendType" BO_ 379 1;
+BA_ "GenMsgCycleTime" BO_ 379 100;
+BA_ "Prio" BO_ 379 0;
+BA_ "GenMsgCycleTime" BO_ 107 10;
+BA_ "Prio" BO_ 107 0;
+BA_ "GenMsgCycleTime" BO_ 109 10;
+BA_ "Prio" BO_ 109 0;
+VAL_ 1281 veh_crash_cmd_b 1 "BOOL__TRUE" 0 "BOOL__FALSE" ;
+VAL_ 1585 veh_bms_db_cb_status_e 3 "CBSTAT_STATE__CLOSING" 2 "CBSTAT_STATE__FAULT" 1 "CB_STATUS__CLOSED" 0 "CB_STATUS__OPEN" ;
+VAL_ 1280 veh_cb_cmd_e 1 "VEH_CB_CMD__CLOSE" 0 "VEH_CB_CMD__OPEN" ;
+VAL_ 1536 veh_bms_db_cb_state_e 2 "CBACT_STATE__FAULT" 1 "CBACT_STATE__CLOSED" 0 "CBACT_STATE__OPEN" ;
+
