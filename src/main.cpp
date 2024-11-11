@@ -92,61 +92,6 @@ void CanRxInterrupt(void) {
     //Serial.println(canId, HEX);
     //Serial.println(canId);
     
-    /*
-    // Process the recived data
-        switch (MsgIN.id) {
-
-        case eBooster_h:
-            eBooster.n_act = (( (unsigned long)(MsgIN.data.int8[4] & 0x03) << 8) | (unsigned long)MsgIN.data.int8[3]) * RPM_Conv_Factor;
-            eBooster.I_act = MsgIN.data.int8[5];
-            eBooster.Fault = MsgIN.data.int16[0] < 0;
-
-            //Serial.println("0x06b read");
-            //Serial.println("n eBooster = ");
-            //Serial.println(eBooster.n_act);
-
-            break;
-
-        case eBooster_l:
-            eBooster.T_act = (MsgIN.data.int8[2] - 32) * 5 / 9;
-            eBooster.U_act = MsgIN.data.int8[3] * U_Conv_Factor;
-
-            //Serial.println("0x17b read");
-            break;
-
-        case Batt_Data1:
-            Bat48V.U_cells = ( ((unsigned int)MsgIN.data.int8[0] << 8) | (unsigned int)MsgIN.data.int8[1]) * UI_Conv_Factor;
-            Bat48V.U_terminal = ( ((unsigned int)MsgIN.data.int8[2] << 8) | (unsigned int)MsgIN.data.int8[3]) * UI_Conv_Factor;
-            Bat48V.I_act = (signed long)( ((unsigned long)MsgIN.data.int8[4] << 24) | ((unsigned long)MsgIN.data.int8[5] << 16) | 
-                                 ((unsigned long)MsgIN.data.int8[6] << 8)  | (unsigned long)MsgIN.data.int8[7]) * UI_Conv_Factor;
-
-            //Serial.println("0x630 read");
-            //Serial.println(Bat48V.I_act);
-            break;
-
-        case Batt_Data2:
-            int temp1 = ((unsigned int)(MsgIN.data.int8[0] & 0x07) << 8) | (unsigned int)MsgIN.data.int8[1];
-            int temp2 = ((unsigned int)(MsgIN.data.int8[2] & 0x07) << 8) | (unsigned int)MsgIN.data.int8[3];
-            Bat48V.T_act = max(temp1, temp2) * T_Conv_Factor;
-            Bat48V.SOC = MsgIN.data.int8[6];
-            Bat48V.CB_State = MsgIN.data.int8[0] >> 6;
-
-            //Serial.println("0x631 read");
-
-            break;
-
-        case Batt_PWR10:
-            Bat48V.I_chrg_avail = ((unsigned int)MsgIN.data.int8[0] << 2) | ((unsigned int)(MsgIN.data.int8[1] & 0xC0) >> 6);
-            Bat48V.I_dschrg_avail = ((unsigned int)MsgIN.data.int8[3] << 2) | ((unsigned int)(MsgIN.data.int8[4] & 0xC0) >> 6);
-            break;
-
-        default:
-
-            Serial.println("RX Error detected: Unknown ID");
-            break;
-
-        }   
-        */ 
 }   
 
 
@@ -215,10 +160,6 @@ void Set_48V_charching_current(const float current){
         else{analogWrite(DCDC_RELAY_PIN, output);}
 
 
-        
-        
-
-        //Custom_Diag_Data_0x666.data.int8[1] = uint8_t(output);
         Serial.println(output);
     }
 }
@@ -253,8 +194,6 @@ void ebooster_idle_speed(void){
 
     arduino_dbc_driver_tx.VEH_TO_EBOOSTER_CONTROL.target_speed_ebooster_ro = 40;
     
-
-    //DATA0x06d[8] = {0, 0, 0x20, 0x00, 0, 0, 0, 0}; 
 }
 
 
@@ -357,8 +296,6 @@ void t_20Hz_Event() {
 
     Pack_VEH_MSG_TO_BMS_dbc_driver(&arduino_dbc_driver_tx.VEH_MSG_TO_BMS, &txframe);
     SEND_CAN_MESSAGE(txframe);
-
-    //SEND_CAN_MESSAGE(Custom_Diag_Data_0x666);
     
     //Serial.println("CAN BUS sendMsgBuf ok!");
     //Serial.print("t_20Hz: ");
@@ -388,7 +325,6 @@ void t_5Hz_Event() {
     int n_requested_raw = analogRead(TPS_POTI_READ_PIN);
     n_requested = round((float)n_requested_raw / 1023 * 72000);       //Read poti value and convert it to requested eBooster RPM
     i_requested = exp((float)n_requested_raw / 1023 * 5)-1; 
-    //Custom_Diag_Data_0x666.data.int8[0] = uint8_t(i_requested*10);
 
     arduino_dbc_driver_tx.VEH_TO_EBOOSTER_CONTROL.target_speed_ebooster_ro = DBC_DRIVER_target_speed_ebooster_ro_toS(n_requested); 
 
@@ -515,9 +451,9 @@ void setup() {
     CAN.init_Filt(2, 0, Batt_PWR10);                            // Battery 10s available charge/discaharge power 
     CAN.init_Filt(3, 0, Batt_Data1);                            // Battery Data 1 Current, Voltage
     CAN.init_Filt(4, 0, eBooster_l);                            // eBooster Temp and Voltage
-
-    Serial.println("CAN init ok!");
 */
+    Serial.println("CAN init ok!");
+
  }
 
 
