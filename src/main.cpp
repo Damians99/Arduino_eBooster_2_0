@@ -19,7 +19,7 @@
 
 //User defined Macro to send a CAN frame
 #define SEND_CAN_MESSAGE(msg) \
-    CAN.sendMsgBuf(msg.id, msg.extended, msg.length, msg.data.character)
+    CAN.sendMsgBuf(msg.MsgId, msg.IDE, msg.DLC, msg.charData);
 
 
 
@@ -68,89 +68,8 @@ const int SPI_CS_PIN = 9;
 
 mcp2515_can CAN(SPI_CS_PIN); // Set CS pin
 
-
-// Data of IDs to send
-union BytesUnion{
- uint64_t int64;
- uint32_t int32[2];
- uint16_t int16[4];
- uint8_t int8[8];
- unsigned char character[8];
-};
-
- struct  CAN_FRAME{
- uint32_t id;               // 29 bit if ide set, 11 bit otherwise
- uint32_t fid;              // family ID - used internally to library
- uint8_t rtr;               // Remote Transmission Request (1 = RTR, 0 = data frame)
- uint8_t priority;          // Priority but only for TX frames and optional (0-31)
- uint8_t extended;          // Extended ID flag
- uint32_t time;             // CAN timer value when mailbox message was received.
- uint8_t length;            // Number of data bytes
- BytesUnion data;           // 64 bytes - lots of ways to access it.
-};
-
-//eBooster control TX Frame (100 Hz)
-CAN_FRAME eBooster_VEH_MSG_0x06d;
-
-//Bat control TX Frame (20Hz)
-CAN_FRAME Bat48V_VEH_MSG_0x500;
-
-//Bat crash signal TX Frame (20Hz)
-CAN_FRAME Bat48V_VEH_CRASH_0x501;
-
-//Custom Diagnostic Data TX Frame (various frequence)
-CAN_FRAME Custom_Diag_Data_0x666;
-
-
-//IDs to recive definition according to DBC
-enum RxId {
-    eBooster_h = 0x06b,
-    eBooster_l = 0x17b,
-    Batt_Data1 = 0x630,
-    Batt_Data2 = 0x631,
-    Batt_PWR10 = 0x621
-};
-
-//Define converation factors for incoming CAN Data (see DBC)
-    // eBooster_h:
-    const int RPM_Conv_Factor = 100;
-    // eBooster_l:
-    const float U_Conv_Factor = 0.251256f;
-    // Batt_Data1
-    const float UI_Conv_Factor = 0.001f;
-    // Batt_Data2
-    const float T_Conv_Factor = 0.1f;
-    // Batt_PWR10
-
-//Define Structs to store incomming CAN Data
-struct ebooster {
-    float I_act;
-    float U_act;
-    float T_act;
-    long n_act;   
-    bool Fault;  
-};
-
-//Actual values recived from ebooster
-ebooster eBooster = {}; 
-
-
-struct bat48V {
-    float I_act;
-    float I_dschrg_avail;
-    float I_chrg_avail;
-    float U_cells;
-    float U_terminal;
-    float T_act;
-    float SOC;
-    int CB_State;
-    bool Fault;
-};
-
-//Actual values recived from 48V Battery
-bat48V Bat48V = {};
-
-
+CanFrame rxframe;
+CanFrame txframe;
 
 
 ///-------------GENERAL FUNCTIONS---------------///
@@ -163,16 +82,17 @@ bat48V Bat48V = {};
 */
 /**************************************************************************/
 void CanRxInterrupt(void) {
-    CAN_FRAME MsgIN;
-    
-    CAN.readMsgBuf(&MsgIN.length, MsgIN.data.character);
-    MsgIN.id = CAN.getCanId();
 
-    
+    CAN.readMsgBuf(&rxframe.DLC, rxframe.charData);
+    rxframe.IDE = CAN.getCanId();
+    rxframe.time = millis();
+
+    arduino_dbc_driver_Receive(&arduino_dbc_driver_rx, rxframe.Data, rxframe.IDE , rxframe.DLC);
+
     //Serial.println(canId, HEX);
     //Serial.println(canId);
     
-
+    /*
     // Process the recived data
         switch (MsgIN.id) {
 
@@ -225,7 +145,8 @@ void CanRxInterrupt(void) {
             Serial.println("RX Error detected: Unknown ID");
             break;
 
-        }    
+        }   
+        */ 
 }   
 
 
@@ -239,19 +160,23 @@ void CanRxInterrupt(void) {
 /**************************************************************************/
 void Boot_48V_Bat(void){
 
-    U_Bat_PID.Setpoint(Bat48V.U_cells);                 //Calculate new PWM by PID Controller
-    const double input = Bat48V.U_terminal;
+    double U_Stack = DBC_DRIVER_veh_bms_db_stack_U_ro_fromS(double(arduino_dbc_driver_rx.VEH_BMS_PACK_DATA_1.veh_bms_db_stack_U_ro));
+    double U_Terminal = DBC_DRIVER_veh_bms_db_term_U_ro_fromS(double(arduino_dbc_driver_rx.VEH_BMS_PACK_DATA_1.veh_bms_db_term_U_ro));
+
+    U_Bat_PID.Setpoint(U_Stack);                 //Calculate new PWM by PID Controller
+    const double input = U_Terminal;
     const double output = U_Bat_PID.Run(input);
     analogWrite(DCDC_RELAY_PIN, output);
 
     if (time_notice >= 500)                             //Check if condition was met the last 500ms
     {
-        Bat48V_VEH_MSG_0x500.data.int8[0] = 1;
+        
+        arduino_dbc_driver_tx.VEH_MSG_TO_BMS.veh_cb_cmd_e = 1;
         analogWrite(DCDC_RELAY_PIN, 0);
     }
 
 
-    if ((Bat48V.U_terminal < (Bat48V.U_cells + 2)) & (Bat48V.U_terminal > (Bat48V.U_cells - 2)) & (Bat48V.U_terminal > 1))
+    if ((U_Terminal < (U_Stack + 2)) & (U_Terminal > (U_Stack - 2)) & (U_Terminal > 1))
     {
         time_notice += 50;                              //Increment the timer by 50ms while condition met (20Hz Event)
     }
@@ -259,7 +184,7 @@ void Boot_48V_Bat(void){
     else
     {
         time_notice = 0;                                //When out of +- 2V Range set timer to 0 and set open CB command
-        Bat48V_VEH_MSG_0x500.data.int8[0] = 0;
+        arduino_dbc_driver_tx.VEH_MSG_TO_BMS.veh_cb_cmd_e = 0;
     }
 }
 
@@ -273,12 +198,14 @@ void Boot_48V_Bat(void){
 void Set_48V_charching_current(const float current){
 
     //Calculate new PWM by PID Controller
-    if (Bat48V.CB_State == 1)
+    if (arduino_dbc_driver_rx.VEH_BMS_PACK_DATA_2.veh_bms_db_cb_status_e == 1)
     {   
         //const float current_requested min(current, Bat48V.I_chrg_avail);
         const float current_requested = current;
+        const double current_acctual = DBC_DRIVER_veh_bms_db_inst_I_ro_fromS(double(arduino_dbc_driver_rx.VEH_BMS_PACK_DATA_1.veh_bms_db_inst_I_ro));
+
         I_Bat_PID.Setpoint(current_requested);
-        const double input = Bat48V.I_act;
+        const double input = current_acctual;
         const double output = I_Bat_PID.Run(input);
 
         if(current <= 0.5){
@@ -291,7 +218,7 @@ void Set_48V_charching_current(const float current){
         
         
 
-        Custom_Diag_Data_0x666.data.int8[1] = uint8_t(output);
+        //Custom_Diag_Data_0x666.data.int8[1] = uint8_t(output);
         Serial.println(output);
     }
 }
@@ -324,8 +251,7 @@ void ebooster_reset_fault(void){
 /**************************************************************************/
 void ebooster_idle_speed(void){
 
-    eBooster_VEH_MSG_0x06d.data.int8[2] = 0x20;
-    eBooster_VEH_MSG_0x06d.data.int8[3] = eBooster_VEH_MSG_0x06d.data.int8[3] & 0b11111100; 
+    arduino_dbc_driver_tx.VEH_TO_EBOOSTER_CONTROL.target_speed_ebooster_ro = 40;
     
 
     //DATA0x06d[8] = {0, 0, 0x20, 0x00, 0, 0, 0, 0}; 
@@ -341,9 +267,7 @@ void ebooster_idle_speed(void){
 /**************************************************************************/
 void ebooster_set_speed(int16_t rpm_speed){
     
-    rpm_speed = round((float)rpm_speed / 100);
-
-    eBooster_VEH_MSG_0x06d.data.int16[1] = rpm_speed;
+    arduino_dbc_driver_tx.VEH_TO_EBOOSTER_CONTROL.target_speed_ebooster_ro = DBC_DRIVER_target_speed_ebooster_ro_toS(rpm_speed);
     
     }
 
@@ -357,7 +281,7 @@ void ebooster_set_speed(int16_t rpm_speed){
 /**************************************************************************/
 void ebooster_set_max_current(int8_t I_max){
 
-    eBooster_VEH_MSG_0x06d.data.int16[7] = I_max;
+    arduino_dbc_driver_tx.VEH_TO_EBOOSTER_CONTROL.max_current_48V = I_max;
     
     }
 
@@ -391,7 +315,8 @@ void t_Startup_Event() {
 /**************************************************************************/
 void t_100Hz_Event() {
 
-    SEND_CAN_MESSAGE(eBooster_VEH_MSG_0x06d);
+    Pack_VEH_TO_EBOOSTER_CONTROL_dbc_driver(&arduino_dbc_driver_tx.VEH_TO_EBOOSTER_CONTROL, &txframe);
+    SEND_CAN_MESSAGE(txframe);
     //Serial.println("CAN BUS sendMsgBuf ok!");
     //Serial.print("t_100Hz: ");
     //Serial.println(millis());
@@ -411,7 +336,7 @@ void t_100Hz_Event() {
 /**************************************************************************/
 void t_20Hz_Event() {
 
-    if ((Bat48V.CB_State != 1) & (millis() > 1000)) //Try to startup 48V within 1000ms after Startup of system
+    if ((arduino_dbc_driver_rx.VEH_BMS_PACK_DATA_2.veh_bms_db_cb_status_e != 1) & (millis() > 1000)) //Try to startup 48V within 1000ms after Startup of system
     {
         Boot_48V_Bat();
     }
@@ -427,10 +352,14 @@ void t_20Hz_Event() {
     //const double output = U_Bat_PID.Run(input);
     //analogWrite(DCDC_RELAY_PIN, output);
 
+    Pack_VEH_CRASH_dbc_driver(&arduino_dbc_driver_tx.VEH_CRASH, &txframe);
+    SEND_CAN_MESSAGE(txframe);
 
-    SEND_CAN_MESSAGE(Bat48V_VEH_MSG_0x500);
-    SEND_CAN_MESSAGE(Bat48V_VEH_CRASH_0x501);
-    SEND_CAN_MESSAGE(Custom_Diag_Data_0x666);
+    Pack_VEH_MSG_TO_BMS_dbc_driver(&arduino_dbc_driver_tx.VEH_MSG_TO_BMS, &txframe);
+    SEND_CAN_MESSAGE(txframe);
+
+    //SEND_CAN_MESSAGE(Custom_Diag_Data_0x666);
+    
     //Serial.println("CAN BUS sendMsgBuf ok!");
     //Serial.print("t_20Hz: ");
     //Serial.println(millis());
@@ -457,12 +386,11 @@ void t_5Hz_Event() {
     */
     
     int n_requested_raw = analogRead(TPS_POTI_READ_PIN);
-    n_requested = round((float)n_requested_raw / 1023 * 72000 / 100);       //Read poti value and convert it to requested eBooster RPM
+    n_requested = round((float)n_requested_raw / 1023 * 72000);       //Read poti value and convert it to requested eBooster RPM
     i_requested = exp((float)n_requested_raw / 1023 * 5)-1; 
-    Custom_Diag_Data_0x666.data.int8[0] = uint8_t(i_requested*10);
+    //Custom_Diag_Data_0x666.data.int8[0] = uint8_t(i_requested*10);
 
-    eBooster_VEH_MSG_0x06d.data.int16[1] = n_requested;
- 
+    arduino_dbc_driver_tx.VEH_TO_EBOOSTER_CONTROL.target_speed_ebooster_ro = DBC_DRIVER_target_speed_ebooster_ro_toS(n_requested); 
 
     //Serial.println(i_requested);
 
@@ -486,7 +414,7 @@ void t_5Hz_Event() {
 void setup() {
     Serial.begin(115200);
 
-
+    /*Init start values
     eBooster.Fault = false;     //Set all faults to false
     Bat48V.Fault = false;
     
@@ -508,7 +436,7 @@ void setup() {
     Custom_Diag_Data_0x666.id = 0x666;
     Custom_Diag_Data_0x666.extended = 0;
     Custom_Diag_Data_0x666.length = 8;
-
+    */
 
 
     //Initialise TaskScheduler
@@ -544,7 +472,10 @@ void setup() {
     Serial.println("I/O Pins initialized sucessfully");
 
     // Setup controllers
-    U_Bat_PID.Start(Bat48V.U_terminal,              // input
+    double U_init = DBC_DRIVER_veh_bms_db_term_U_ro_fromS((double)arduino_dbc_driver_rx.VEH_BMS_PACK_DATA_1.veh_bms_db_term_U_ro);
+    double I_init = DBC_DRIVER_veh_bms_db_inst_I_ro_fromS((double)arduino_dbc_driver_rx.VEH_BMS_PACK_DATA_1.veh_bms_db_inst_I_ro);
+
+    U_Bat_PID.Start(U_init,                         // input
               40,                                   // current output
               42);                                  // setpoint (Voltage at terminal)
 
@@ -552,7 +483,7 @@ void setup() {
     U_Bat_PID.SetSampleTime(Ts1);
 
 
-    I_Bat_PID.Start(Bat48V.I_act,                   // input    
+    I_Bat_PID.Start(I_init,                         // input    
                 0,                                  // current output
                 0);                                 // setpoint (charching current)
 
@@ -577,7 +508,7 @@ void setup() {
 
 
     //set filter for all id's we will recive there are 6 filter in mcp2515
-
+/*
     CAN.init_Filt(0, 0, eBooster_h);                            // eBooster act. Values (RPM, Current....)
     CAN.init_Filt(1, 0, Batt_Data2);                            // Battery Data 2 CB State, Temp....
 
@@ -586,7 +517,7 @@ void setup() {
     CAN.init_Filt(4, 0, eBooster_l);                            // eBooster Temp and Voltage
 
     Serial.println("CAN init ok!");
-
+*/
  }
 
 
