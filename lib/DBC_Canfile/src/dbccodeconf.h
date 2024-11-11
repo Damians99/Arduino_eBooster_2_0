@@ -10,11 +10,27 @@
 // #include "{header_with_can_struct}"
 // typedef {can_struct} __CoderDbcCanFrame_t__;
 
+/*typedef union {
+ uint64_t int64;
+ uint32_t int32[2];
+ uint16_t int16[4];
+ uint8_t int8[8];
+ unsigned char character[8];
+} BytesUnion;*/
+
+
 typedef struct {
-	uint32_t MsgId : 28;
-	uint8_t IDE : 1;
-	uint8_t DLC;
-	uint8_t Data[8];
+	uint32_t MsgId;		// 29 bit if ide set, 11 bit otherwise
+	uint32_t fid;				// family ID - used internally to library
+	uint8_t IDE;			// Extended ID flag
+	uint8_t rtr; 				// Remote Transmission Request (1 = RTR, 0 = data frame)
+	uint8_t priority;			// Priority but only for TX frames and optional (0-31)
+	uint32_t time; 				// CAN timer value when mailbox message was received
+	uint8_t DLC;				// Number of data bytes
+	union {
+        uint8_t Data[8];    	// Ermöglicht direkten Zugriff über `frame.Data[3]`
+        unsigned char charData[8]; // Alternativer Zugriff für spezialisierte Darstellung
+    };
 } CanFrame;
 
 typedef CanFrame __CoderDbcCanFrame_t__;
