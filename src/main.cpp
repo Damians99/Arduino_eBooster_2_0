@@ -170,7 +170,7 @@ void Set_48V_charching_current(const float current){
         else{analogWrite(DCDC_RELAY_PIN, output);}
 
 
-        Serial.println(output);
+        //Serial.println(output);
     }
 }
 
@@ -247,8 +247,8 @@ void ebooster_set_max_current(int8_t I_max){
 /**************************************************************************/
 void t_Startup_Event() {
 
-    Serial.print("t_Startup: ");
-    Serial.println(millis());
+    //Serial.print("t_Startup: ");
+    //Serial.println(millis());
   
 }
 
@@ -359,14 +359,14 @@ void t_5Hz_Event() {
 
 void setup() {
 
-    
-    Serial.begin(115200);
-
         
     #ifdef DEBUG
         //Serial.print("Debugging active");
         //Serial.end();
         debug_init();
+
+    #else
+        Serial.begin(115200);
     #endif
 
     /*Init start values
@@ -395,37 +395,46 @@ void setup() {
 
 
     //Initialise TaskScheduler
-    Serial.println("Scheduler TEST");
+    #ifndef DEBUG
+        Serial.println("Scheduler TEST");
+    #endif
     
     scheduler.init();
-    Serial.println("Initialized scheduler");
-    
+    #ifndef DEBUG
+        Serial.println("Initialized scheduler");
+    #endif
     scheduler.addTask(t_100Hz);
-    Serial.println("added t_100Hz");
-    
+    #ifndef DEBUG
+        Serial.println("added t_100Hz");
+    #endif
     scheduler.addTask(t_20Hz);
-    Serial.println("added t_20Hz");
-
+    #ifndef DEBUG
+        Serial.println("added t_20Hz");
+    #endif
     scheduler.addTask(t_5Hz);
-    Serial.println("added t_5Hz");
-    
+    #ifndef DEBUG
+        Serial.println("added t_5Hz");
+    #endif
     scheduler.addTask(t_Startup);
-    Serial.println("added t_Startup");
-
+    #ifndef DEBUG
+        Serial.println("added t_Startup");
+    #endif
     delay(500);
     
     t_100Hz.enable();
     t_20Hz.enable();
     t_5Hz.enable();   
     t_Startup.enable();
-    Serial.println("All Tasks enabled");
-
+    #ifndef DEBUG
+        Serial.println("All Tasks enabled");
+    #endif
     // Setup Arduino I/O Pins definitions
     pinMode(DCDC_RELAY_PIN, OUTPUT);
     pinMode(TPS_POTI_READ_PIN, INPUT);
     pinMode(A5, INPUT_PULLUP);
-    Serial.println("I/O Pins initialized sucessfully");
-
+    #ifndef DEBUG
+        Serial.println("I/O Pins initialized sucessfully");
+    #endif
     // Setup controllers
     double U_init = DBC_DRIVER_veh_bms_db_term_U_ro_fromS((double)arduino_dbc_driver_rx.VEH_BMS_PACK_DATA_1.veh_bms_db_term_U_ro);
     double I_init = DBC_DRIVER_veh_bms_db_inst_I_ro_fromS((double)arduino_dbc_driver_rx.VEH_BMS_PACK_DATA_1.veh_bms_db_inst_I_ro);
@@ -447,12 +456,12 @@ void setup() {
 
 
     // Initialise and setup CAN-Bus shield
-    Serial.begin(115200);
-    while(!Serial); // wait for Serial
 
     while (CAN_OK != CAN.begin(CAN_500KBPS)) {             // init can bus : baudrate = 500k
+    #ifndef DEBUG
         Serial.println("CAN BUS Shield init fail");
         Serial.println(" Init CAN BUS Shield again");
+    #endif
         delay(500);
     }
 
@@ -471,8 +480,9 @@ void setup() {
     CAN.init_Filt(3, 0, Batt_Data1);                            // Battery Data 1 Current, Voltage
     CAN.init_Filt(4, 0, eBooster_l);                            // eBooster Temp and Voltage
 */
-    Serial.println("CAN init ok!");
-
+    #ifndef DEBUG
+        Serial.println("CAN init ok!");
+    #endif
  }
 
 
