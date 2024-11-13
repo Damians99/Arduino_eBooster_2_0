@@ -13,6 +13,16 @@
 #include "arduino_dbc_driver-binutil.h"
 //#include <OBD2.h>  DO NOT INCLUDE BEFORE REDEFINE MPC2515 CAN header files!
 
+//includ debugging:
+#define DEBUG
+    
+#ifdef DEBUG
+    #include "avr8-stub.h"
+    #include "app_api.h"
+#endif
+
+
+
  
 #define TPS_POTI_READ_PIN A0
 #define DCDC_RELAY_PIN 6
@@ -348,7 +358,16 @@ void t_5Hz_Event() {
 ///-------------ARDUINO SETUP---------------///
 
 void setup() {
+
+    
     Serial.begin(115200);
+
+        
+    #ifdef DEBUG
+        //Serial.print("Debugging active");
+        //Serial.end();
+        debug_init();
+    #endif
 
     /*Init start values
     eBooster.Fault = false;     //Set all faults to false
